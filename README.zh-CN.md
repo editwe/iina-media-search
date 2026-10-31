@@ -3,6 +3,7 @@
 播放视频时读取当前文件名，清洗后一键在豆瓣 / IMDb / TMDB / Google / 必应，或你自己添加的任意站点搜索。
 
 [![许可证](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![下载](https://img.shields.io/github/v/release/editwe/iina-media-search?label=download&color=2ea44f)](https://github.com/editwe/iina-media-search/releases/latest)
 [![IINA](https://img.shields.io/badge/IINA-1.4%2B-3b82f6)](https://iina.io)
 [![macOS](https://img.shields.io/badge/macOS-11%2B-111111)](https://github.com/editwe/iina-media-search#环境要求)
 
@@ -30,15 +31,19 @@
 
 ## 安装
 
-IINA 对本地插件没有「一键安装」，复制目录即可：
+**下载 [`media-search-1.3.1.zip`](https://github.com/editwe/iina-media-search/releases/latest/download/media-search-1.3.1.zip)**，解压后把 `media-search.iinaplugin` 整个文件夹放进插件目录：
+
+```bash
+"$HOME/Library/Application Support/com.colliderli.iina/plugins/"
+```
+
+或者从源码来：
 
 ```bash
 git clone https://github.com/editwe/iina-media-search.git
 cp -R iina-media-search/media-search.iinaplugin \
       "$HOME/Library/Application Support/com.colliderli.iina/plugins/"
 ```
-
-没装 `git`？下载[源码 ZIP](https://github.com/editwe/iina-media-search/archive/refs/heads/main.zip)，解压后把 `media-search.iinaplugin` 整个文件夹拷到上面那个路径。
 
 然后：
 

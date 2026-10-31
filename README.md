@@ -3,6 +3,7 @@
 Search the file you're playing on Douban / IMDb / TMDB / Google / Bing — or any site you add — with a single keystroke.
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/editwe/iina-media-search?label=download&color=2ea44f)](https://github.com/editwe/iina-media-search/releases/latest)
 [![IINA](https://img.shields.io/badge/IINA-1.4%2B-3b82f6)](https://iina.io)
 [![macOS](https://img.shields.io/badge/macOS-11%2B-111111)](https://github.com/editwe/iina-media-search#requirements)
 
@@ -30,15 +31,19 @@ It reads the current filename, strips the release noise (`1080p`, `WEB-DL`, `DDP
 
 ## Install
 
-IINA has no plugin-store install button for local builds, so copy the bundle:
+**[Download `media-search-1.3.1.zip`](https://github.com/editwe/iina-media-search/releases/latest/download/media-search-1.3.1.zip)** — unzip it, then move `media-search.iinaplugin` into the plugins folder:
+
+```bash
+"$HOME/Library/Application Support/com.colliderli.iina/plugins/"
+```
+
+Or from source:
 
 ```bash
 git clone https://github.com/editwe/iina-media-search.git
 cp -R iina-media-search/media-search.iinaplugin \
       "$HOME/Library/Application Support/com.colliderli.iina/plugins/"
 ```
-
-No `git`? Grab the [source ZIP](https://github.com/editwe/iina-media-search/archive/refs/heads/main.zip), unzip it, and copy the `media-search.iinaplugin` folder to that same path.
 
 Then:
 
