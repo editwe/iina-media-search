@@ -13,7 +13,7 @@ import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SRC = os.path.join(ROOT, "media-search.iinaplugin/ui/sidebar.html")
+SRC = os.path.join(ROOT, "ui/sidebar.html")
 OUT = os.path.join(ROOT, "docs/images")
 EDGE = "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge"
 

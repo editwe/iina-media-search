@@ -38,16 +38,18 @@
 editwe/iina-media-search
 ```
 
-确认即可。IINA 会从 latest release 里取 `.iinaplgz` 安装，以后还能帮你检查更新。
+确认即可。IINA 会优先从 latest release 取 `.iinaplgz`，取不到就下载 `main` 分支源码，以后还能帮你检查更新。
 
-**用安装包**：下载 [`media-search-1.4.0.iinaplgz`](https://github.com/editwe/iina-media-search/releases/latest/download/media-search-1.4.0.iinaplgz)，双击它；或者走 **设置 → 插件 → 安装本地插件…** 选中这个文件。这个对话框只认 `.iinaplgz`，光是一个 `.iinaplugin` 文件夹是选不了的。
+**用安装包**：下载 [`media-search-1.4.1.iinaplgz`](https://github.com/editwe/iina-media-search/releases/latest/download/media-search-1.4.1.iinaplgz)，双击它；或者走 **设置 → 插件 → 安装本地插件…** 选中这个文件。这个对话框只认 `.iinaplgz`，光是一个 `.iinaplugin` 文件夹是选不了的。
 
-**手动复制**：克隆仓库，把插件包拷进 IINA 的插件目录：
+**手动复制**：插件文件就在仓库根目录，把这四个文件放进一个以 `.iinaplugin` 结尾的文件夹：
 
 ```bash
-git clone https://github.com/editwe/iina-media-search.git
-cp -R iina-media-search/media-search.iinaplugin \
-      "$HOME/Library/Application Support/com.colliderli.iina/plugins/"
+PLUGINS="$HOME/Library/Application Support/com.colliderli.iina/plugins"
+git clone https://github.com/editwe/iina-media-search.git && cd iina-media-search
+mkdir -p "$PLUGINS/media-search.iinaplugin/ui"
+cp Info.json index.js pref.html "$PLUGINS/media-search.iinaplugin/"
+cp ui/sidebar.html "$PLUGINS/media-search.iinaplugin/ui/"
 ```
 
 然后：
@@ -139,6 +141,9 @@ Spider-Man.No.Way.Home.2021.1080p.WEB-DL.mkv                →  Spider-Man No W
 **打开播放器后面板是空的（1.3.1 已修）。**
 侧边栏 WebView 每次加载页面都会把消息监听清掉，插件当时是往一个已经死掉的管道里推数据。现在每次加载后都会重新挂上监听，面板启动时也会自己来拉一次状态。如果你看到的还是空面板，升到 1.3.1 再重启一次 IINA。
 
+**从 GitHub 安装时报「IINA 无法加载此插件，可能是格式错误」。**
+这是 1.4.0 及更早版本的问题：插件放在子目录里，而 IINA 的源码兜底安装会在仓库根目录找 `Info.json`。1.4.1 已修好，重新安装一次，或者直接用最新 release 里的 `.iinaplgz`。
+
 **⌘ 热键没反应 / 录不进去。**
 ⌘ 组合归应用菜单管。改成手输（`Meta+D`），或者换成 ⌥/⌃ 的组合。
 
@@ -174,16 +179,26 @@ Spider-Man.No.Way.Home.2021.1080p.WEB-DL.mkv                →  Spider-Man No W
 ├── README.md                 英文说明
 ├── README.zh-CN.md           本文件
 ├── LICENSE                   MIT
+├── Info.json                 插件清单：权限、偏好默认值、默认引擎
+├── index.js                  清洗、引擎存储、热键、菜单、剪贴板、面板 IPC
+├── pref.html                 设置页（IINA 按 data-pref-key 自动读写）
+├── ui/sidebar.html           侧边栏面板：搜索按钮、引擎编辑、按键录入
 ├── docs/images/              截图
-├── tools/render-screenshots.py  重新生成上面四张截图
-└── media-search.iinaplugin/
-    ├── Info.json             插件清单：权限、偏好默认值、默认引擎
-    ├── index.js              清洗、引擎存储、热键、菜单、剪贴板、面板 IPC
-    ├── pref.html             设置页（IINA 按 data-pref-key 自动读写）
-    └── ui/sidebar.html       侧边栏面板：搜索按钮、引擎编辑、按键录入
+└── tools/
+    ├── build-package.sh      生成 media-search-<版本>.iinaplgz 和 .zip
+    └── render-screenshots.py 重新生成上面四张截图
 ```
 
+插件文件放在仓库根目录是有原因的：IINA 的「获取插件…」优先取 latest release 的 `.iinaplgz`，
+取不到就退回 `archive/main.zip`，解压后执行 `mv */*`，所以 `Info.json` 必须在根目录。
+放在子目录里就会报「IINA 无法加载此插件，可能是格式错误」。
+`checkNewVersion()` 读的也是 `raw.githubusercontent.com/<repo>/main/Info.json`，同理。
+
 ## 更新日志
+
+**1.4.1**
+- 修复在 **设置 → 插件 → 获取插件…** 里输入 `editwe/iina-media-search` 安装时报「IINA 无法加载此插件，可能是格式错误」：插件原先放在 `media-search.iinaplugin/` 子目录，而 IINA 的源码兜底安装只把仓库解压后拍平一层，`Info.json` 就没落到它要找的位置。现在文件都在仓库根目录。
+- 顺带修好了更新检查：`checkNewVersion()` 现在能读到 `main` 上的 `Info.json`，以前是 404。
 
 **1.4.0**
 

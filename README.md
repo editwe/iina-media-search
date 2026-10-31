@@ -38,16 +38,18 @@ It reads the current filename, strips the release noise (`1080p`, `WEB-DL`, `DDP
 editwe/iina-media-search
 ```
 
-and confirm. IINA pulls the `.iinaplgz` from the latest release, so it can check for updates for you later.
+and confirm. IINA downloads the `.iinaplgz` from the latest release — or, if that is unreachable, the `main` branch — so it can check for updates for you later.
 
-**From the package.** Download [`media-search-1.4.0.iinaplgz`](https://github.com/editwe/iina-media-search/releases/latest/download/media-search-1.4.0.iinaplgz) and double-click it, or use **Settings → Plugins → 安装本地插件… / Install Local Plugin…** and pick the file. That dialog only accepts `.iinaplgz` — a bare `.iinaplugin` folder cannot be selected there.
+**From the package.** Download [`media-search-1.4.1.iinaplgz`](https://github.com/editwe/iina-media-search/releases/latest/download/media-search-1.4.1.iinaplgz) and double-click it, or use **Settings → Plugins → 安装本地插件… / Install Local Plugin…** and pick the file. That dialog only accepts `.iinaplgz` — a bare `.iinaplugin` folder cannot be selected there.
 
-**By hand.** Clone and copy the bundle into IINA's plugin folder:
+**By hand.** The plugin files sit at the repository root, so copy the four of them into a folder whose name ends in `.iinaplugin`:
 
 ```bash
-git clone https://github.com/editwe/iina-media-search.git
-cp -R iina-media-search/media-search.iinaplugin \
-      "$HOME/Library/Application Support/com.colliderli.iina/plugins/"
+PLUGINS="$HOME/Library/Application Support/com.colliderli.iina/plugins"
+git clone https://github.com/editwe/iina-media-search.git && cd iina-media-search
+mkdir -p "$PLUGINS/media-search.iinaplugin/ui"
+cp Info.json index.js pref.html "$PLUGINS/media-search.iinaplugin/"
+cp ui/sidebar.html "$PLUGINS/media-search.iinaplugin/ui/"
 ```
 
 Then:
@@ -139,6 +141,9 @@ Check that the plugin is enabled in **Settings → Plugins** and that both permi
 **The panel is empty right after launch (fixed in 1.3.1).**
 The sidebar WebView drops its message listener every time IINA loads the page, so the plugin was pushing data into a void. It now re-attaches after every load, and the panel asks for the state itself. If your panel is still empty, update to 1.3.1 and restart IINA once.
 
+**"IINA cannot load this plugin, the format may be incorrect" when installing from GitHub.**
+That was 1.4.0 and earlier: the plugin lived in a subfolder, and IINA's source fallback looks for `Info.json` at the repository root. Fixed in 1.4.1 — install again, or use the `.iinaplgz` from the latest release.
+
 **⌘ hotkeys do nothing / can't be recorded.**
 macOS reserves ⌘ chords for the app menu. Type the chord by hand (`Meta+D`) or pick an ⌥/⌃ combination.
 
@@ -174,16 +179,27 @@ The clipboard goes through `osascript`, which needs the `file-system` permission
 ├── README.md                 this file
 ├── README.zh-CN.md           Chinese readme
 ├── LICENSE                   MIT
+├── Info.json                 manifest: permissions, preference defaults, default engines
+├── index.js                  cleaning, engine storage, hotkeys, menu, clipboard, IPC
+├── pref.html                 settings page (IINA binds inputs via data-pref-key)
+├── ui/sidebar.html           sidebar panel: search buttons, engine editor, key recorder
 ├── docs/images/              screenshots
-├── tools/render-screenshots.py  regenerates the four screenshots above
-└── media-search.iinaplugin/
-    ├── Info.json             manifest: permissions, preference defaults, default engines
-    ├── index.js              cleaning, engine storage, hotkeys, menu, clipboard, IPC
-    ├── pref.html             settings page (IINA binds inputs via data-pref-key)
-    └── ui/sidebar.html       sidebar panel: search buttons, engine editor, key recorder
+└── tools/
+    ├── build-package.sh      builds media-search-<version>.iinaplgz and .zip
+    └── render-screenshots.py regenerates the four screenshots above
 ```
 
+The plugin files live at the repository root on purpose. IINA's *Get Plugins…* installs from the
+latest release, and when that download fails it falls back to `archive/main.zip`, unzips it and
+moves `*/*` into the plugin folder — so `Info.json` has to be at the root, not inside a subfolder.
+A nested layout fails with *"IINA cannot load this plugin, the format may be incorrect"*.
+For the same reason `checkNewVersion()` reads `raw.githubusercontent.com/<repo>/main/Info.json`.
+
 ## Changelog
+
+**1.4.1**
+- Fixed installing from **Settings → Plugins → Get Plugins…** with `editwe/iina-media-search`, which failed with *"IINA cannot load this plugin, the format may be incorrect"*. The plugin used to live in a `media-search.iinaplugin/` subfolder; IINA's fallback installer unzips the repository and flattens exactly one level, so `Info.json` never landed where it looked. The files now sit at the repository root.
+- Side effect: `checkNewVersion()` can read `Info.json` from `main` now, so update checks work instead of returning 404.
 
 **1.4.0**
 - English UI. The panel, the menu, the OSD messages and the settings page now pick a language from the system (`utils.preferredLocalizations()` in the plugin, `navigator.language` in the web views): Chinese for `zh-*`, English otherwise. `Info.json` gained a `localized` block so IINA shows the right store description too.

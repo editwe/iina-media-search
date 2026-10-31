@@ -1347,4 +1347,4 @@ try {
   log("初始化菜单失败: " + e);
 }
 resolveLanguageAsync();
-log("已加载 v1.4.0 (" + LANG + ")");
+log("已加载 v1.4.1 (" + LANG + ")");
