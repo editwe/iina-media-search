@@ -12,10 +12,139 @@
 
 // MARK: - 默认数据（首次安装写入偏好，之后以偏好为准）
 
+// MARK: - 语言 / Localisation
+//
+// 插件跑在 JSCore 里，没有 navigator；IINA 提供了 utils.preferredLocalizations()，
+// 返回 Bundle.main.preferredLocalizations（例如 ["zh-Hans", "en"]）。
+// 只区分中文与其他：其他语言一律回退英文。
+
+function detectLanguage() {
+  try {
+    var list = iina.utils.preferredLocalizations();
+    var first = list && list.length ? String(list[0]) : "";
+    return /^zh/i.test(first) ? "zh" : "en";
+  } catch (e) {
+    return "en";
+  }
+}
+
+var LANG = detectLanguage();
+
+var STRINGS = {
+  zh: {
+    noMedia: "当前没有正在播放的媒体",
+    noEngines: "还没有配置搜索引擎，请在侧边栏面板里添加",
+    invalidURL: "搜索地址无效，请检查「%1」的 URL 模板",
+    searchDone: "%1：%2",
+    cannotOpenBrowser: "无法打开浏览器",
+    nothingToCopy: "没有可复制的内容",
+    copyFailed: "复制失败：%1",
+    copyNoPermission: "复制失败：需要「文件系统访问」权限，请在设置 → 插件里重新授权",
+    copyOk: "已复制：%1",
+    copyExit: "复制失败，osascript 退出码 %1",
+    menuNoMedia: "没有正在播放的媒体",
+    menuOpenPanel: "打开 Media Search 面板",
+    menuSearch: "搜索：%1（%2）",
+    menuNoEngines: "尚未配置搜索引擎",
+    menuCurrentFile: "当前文件",
+    menuRaw: "  原始：%1",
+    menuQuery: "  关键词：%1",
+    menuSearchOn: "在 %1 搜索",
+    menuCopyFilename: "复制文件名（无扩展名）",
+    menuRawSearch: "用完整文件名搜索",
+    fixedDefaultSearch: "默认搜索",
+    fixedRawSearch: "用完整文件名搜索",
+    fixedOpenPanel: "打开面板",
+    warnKeyTaken: "热键 %1 被「%2」和「%3」同时占用",
+    warnCopyTaken: "复制文件名热键 %1 与「%2」重复",
+    labelCopy: "复制文件名",
+    warnCmdC: "⌘C 可能被系统「复制」菜单占用；若按下没反应，改成 ⌥C 之类的组合即可",
+    warnBuiltin: "热键 %1（%2）可能与 IINA 自带快捷键冲突",
+    warnFailedKeys: "热键 %1 无法被 IINA 识别，已跳过；换一个组合键即可",
+    untitled: "未命名",
+    newEngineName: "新搜索引擎",
+    msgAdded: "已添加，请填写名称、地址和热键",
+    msgSaveFailed: "保存失败",
+    msgDeleteNotFound: "没有找到要删除的搜索引擎",
+    msgDeleted: "已删除",
+    msgEngineGone: "搜索引擎已不存在，请刷新面板",
+    msgKeyInvalid: "热键无法识别，已保留原热键（示例：Alt+1、Meta+D、F2）",
+    msgKeyInvalidCopy: "热键无法识别，示例：Alt+c、Meta+D、F2",
+    msgCopyKeySet: "复制热键已更新为 %1",
+    msgCopyTargetChanged: "复制内容已切换",
+    msgEnginesReset: "已恢复默认搜索引擎",
+    emptyLabel: "（空）",
+    listSeparator: "、"
+  },
+  en: {
+    noMedia: "Nothing is playing",
+    noEngines: "No search engine set up yet — add one in the sidebar panel",
+    invalidURL: "Invalid search URL — check the template for \u201c%1\u201d",
+    searchDone: "%1: %2",
+    cannotOpenBrowser: "Could not open the browser",
+    nothingToCopy: "Nothing to copy",
+    copyFailed: "Copy failed: %1",
+    copyNoPermission: "Copy failed — the plugin needs the File System permission. Re-grant it in Settings \u2192 Plugins.",
+    copyOk: "Copied: %1",
+    copyExit: "Copy failed, osascript exited with %1",
+    menuNoMedia: "Nothing is playing",
+    menuOpenPanel: "Open Media Search Panel",
+    menuSearch: "Search: %1 (%2)",
+    menuNoEngines: "No search engine configured",
+    menuCurrentFile: "Current file",
+    menuRaw: "  Raw: %1",
+    menuQuery: "  Query: %1",
+    menuSearchOn: "Search on %1",
+    menuCopyFilename: "Copy filename (no extension)",
+    menuRawSearch: "Search with the full filename",
+    fixedDefaultSearch: "Default search",
+    fixedRawSearch: "Search with the full filename",
+    fixedOpenPanel: "Open panel",
+    warnKeyTaken: "Hotkey %1 is claimed by both \u201c%2\u201d and \u201c%3\u201d",
+    warnCopyTaken: "The copy hotkey %1 collides with \u201c%2\u201d",
+    labelCopy: "Copy filename",
+    warnCmdC: "\u2318C is usually taken by the system Copy menu — switch to \u2325C if it does nothing",
+    warnBuiltin: "Hotkey %1 (%2) may conflict with an IINA built-in shortcut",
+    warnFailedKeys: "Hotkey %1 is not recognised by IINA and was skipped — try another combination",
+    untitled: "Untitled",
+    newEngineName: "New search engine",
+    msgAdded: "Added — fill in the name, URL and hotkey",
+    msgSaveFailed: "Could not save",
+    msgDeleteNotFound: "That search engine no longer exists",
+    msgDeleted: "Deleted",
+    msgEngineGone: "That search engine no longer exists — reload the panel",
+    msgKeyInvalid: "Unrecognised hotkey; the previous one was kept (e.g. Alt+1, Meta+D, F2)",
+    msgKeyInvalidCopy: "Unrecognised hotkey, e.g. Alt+c, Meta+D, F2",
+    msgCopyKeySet: "Copy hotkey is now %1",
+    msgCopyTargetChanged: "Copy target changed",
+    msgEnginesReset: "Default search engines restored",
+    emptyLabel: "(none)",
+    listSeparator: ", "
+  }
+};
+
+function t(key) {
+  var table = STRINGS[LANG] || STRINGS.en;
+  var text = table[key];
+  if (text === undefined) text = STRINGS.en[key];
+  if (text === undefined) return key;
+  for (var i = 1; i < arguments.length; i++) {
+    text = text.replace("%" + i, arguments[i]);
+  }
+  return text;
+}
+
+// 内置引擎在两种语言下的名字。只有「名字仍是另一种语言的内置名」时才改写，
+// 用户自己改过的名字不动。
+var BUILTIN_NAMES = {
+  douban: { zh: "豆瓣", en: "Douban" },
+  bing: { zh: "必应", en: "Bing" }
+};
+
 var DEFAULT_ENGINES = [
   {
     id: "douban",
-    name: "豆瓣",
+    name: "Douban",
     tpl: "https://search.douban.com/movie/subject_search?search_text={q}",
     key: "Alt+1",
   },
@@ -39,7 +168,7 @@ var DEFAULT_ENGINES = [
   },
   {
     id: "bing",
-    name: "必应",
+    name: "Bing",
     tpl: "https://www.bing.com/search?q={q}",
     key: "Alt+5",
   },
@@ -219,9 +348,9 @@ function pad2(num) {
 
 // 插件内置的固定热键，引擎和复制功能不能再占用（写作 IINA 规范形式）
 var FIXED_KEYS = {
-  "Meta+S": "默认搜索",
-  "Meta+R": "用完整文件名搜索",
-  "Meta+K": "打开面板",
+  "Meta+S": t("fixedDefaultSearch"),
+  "Meta+R": t("fixedRawSearch"),
+  "Meta+K": t("fixedOpenPanel"),
 };
 
 function collectWarnings(engines, copyKey) {
@@ -236,7 +365,7 @@ function collectWarnings(engines, copyKey) {
   engines.forEach(function (engine) {
     if (!engine.key) return;
     if (owners[engine.key]) {
-      warnings.push("热键 " + engine.key + " 被「" + owners[engine.key] + "」和「" + engine.name + "」同时占用");
+      warnings.push(t("warnKeyTaken", engine.key, owners[engine.key], engine.name));
     } else {
       owners[engine.key] = engine.name;
     }
@@ -244,18 +373,18 @@ function collectWarnings(engines, copyKey) {
 
   if (copyKey) {
     if (owners[copyKey]) {
-      warnings.push("复制文件名热键 " + copyKey + " 与「" + owners[copyKey] + "」重复");
+      warnings.push(t("warnCopyTaken", copyKey, owners[copyKey]));
     } else {
-      owners[copyKey] = "复制文件名";
+      owners[copyKey] = t("labelCopy");
     }
   }
 
   for (key in owners) {
     if (IINA_KEYS.indexOf(key) >= 0) {
       if (key === "Meta+c") {
-        warnings.push("⌘C 可能被系统「复制」菜单占用；若按下没反应，改成 ⌥C 之类的组合即可");
+        warnings.push(t("warnCmdC"));
       } else {
-        warnings.push("热键 " + key + "（" + owners[key] + "）可能与 IINA 自带快捷键冲突");
+        warnings.push(t("warnBuiltin", key, owners[key]));
       }
     }
   }
@@ -286,7 +415,7 @@ function getEngines() {
             var normalized = normalizeKey(item.key);
             return {
               id: String(item.id || "e_" + Math.random().toString(36).slice(2, 8)),
-              name: String(item.name || "未命名"),
+              name: String(item.name || t("untitled")),
               tpl: String(item.tpl || ""),
               key: normalized === null ? "" : normalized,
             };
@@ -320,6 +449,29 @@ function ensureMigrated() {
     migratePreferences();
   } catch (e) {
     log("偏好迁移失败: " + e);
+  }
+}
+
+/**
+ * 内置引擎的名字跟着界面语言走：英文环境里 Douban/Bing，中文环境里 豆瓣/必应。
+ * 只改写「名字正好是另一种语言的内置名」的项，用户自己改过的名字保持不变。
+ */
+function syncDefaultNames() {
+  try {
+    var engines = getEngines();
+    var changed = false;
+    engines.forEach(function (engine) {
+      var names = BUILTIN_NAMES[engine.id];
+      if (!names) return;
+      var other = LANG === "zh" ? names.en : names.zh;
+      if (engine.name === other) {
+        engine.name = names[LANG];
+        changed = true;
+      }
+    });
+    if (changed) saveEngines(engines);
+  } catch (e) {
+    log("同步引擎名称失败: " + e);
   }
 }
 
@@ -537,13 +689,13 @@ function buildURL(engine, query) {
 function openSearch(engineId, useRawName) {
   var info = getMediaInfo();
   if (!info) {
-    notify("当前没有正在播放的媒体");
+    notify(t("noMedia"));
     return;
   }
 
   var engines = getEngines();
   if (!engines.length) {
-    notify("还没有配置搜索引擎，请在侧边栏面板里添加");
+    notify(t("noEngines"));
     return;
   }
 
@@ -557,12 +709,12 @@ function openSearch(engineId, useRawName) {
   var url = buildURL(engine, query);
 
   if (!/^https?:\/\//i.test(url)) {
-    notify("搜索地址无效，请检查「" + engine.name + "」的 URL 模板");
+    notify(t("invalidURL", engine.name));
     return;
   }
 
   var ok = iina.utils.open(url);
-  notify(ok ? engine.name + "：" + shorten(query) : "无法打开浏览器");
+  notify(ok ? t("searchDone", engine.name, shorten(query)) : t("cannotOpenBrowser"));
 }
 
 // MARK: - 复制到剪贴板
@@ -570,7 +722,7 @@ function openSearch(engineId, useRawName) {
 function copyToClipboard(text) {
   var value = String(text === undefined || text === null ? "" : text);
   if (!value) {
-    notify("没有可复制的内容");
+    notify(t("nothingToCopy"));
     return;
   }
 
@@ -580,12 +732,12 @@ function copyToClipboard(text) {
   try {
     promise = iina.utils.exec("/usr/bin/osascript", ["-e", script], null, null, null);
   } catch (e) {
-    notify("复制失败：" + e);
+    notify(t("copyFailed", e));
     return;
   }
 
   if (!promise) {
-    notify("复制失败：需要「文件系统访问」权限，请在设置 → 插件里重新授权");
+    notify(t("copyNoPermission"));
     return;
   }
 
@@ -593,16 +745,16 @@ function copyToClipboard(text) {
     promise
       .then(function (result) {
         if (result && result.status === 0) {
-          notify("已复制：" + shorten(value));
+          notify(t("copyOk", shorten(value)));
         } else {
-          notify("复制失败，osascript 退出码 " + (result ? result.status : "?"));
+          notify(t("copyExit", result ? result.status : "?"));
         }
       })
       .catch(function (error) {
-        notify("复制失败：" + error);
+        notify(t("copyFailed", error));
       });
   } else {
-    notify("已复制：" + shorten(value));
+    notify(t("copyOk", shorten(value)));
   }
 }
 
@@ -614,7 +766,7 @@ function stripExtension(name) {
 function copyCurrent(useRawName) {
   var info = getMediaInfo();
   if (!info) {
-    notify("当前没有正在播放的媒体");
+    notify(t("noMedia"));
     return;
   }
 
@@ -656,10 +808,10 @@ function buildMenu() {
   var copyKey = getPref("copyKey");
 
   if (!info) {
-    iina.menu.addItem(iina.menu.item("没有正在播放的媒体", null, { enabled: false }));
+    iina.menu.addItem(iina.menu.item(t("menuNoMedia"), null, { enabled: false }));
     iina.menu.addItem(iina.menu.separator());
     iina.menu.addItem(
-      iina.menu.item("打开 Media Search 面板" + (recordingMode ? "  " + prettyKey("Meta+K") : ""), function () {
+      iina.menu.item(t("menuOpenPanel") + (recordingMode ? "  " + prettyKey("Meta+K") : ""), function () {
         showSidebar();
       }, menuOptions("Meta+K"))
     );
@@ -669,23 +821,23 @@ function buildMenu() {
   if (engines.length) {
     var primary = engines[0];
     iina.menu.addItem(
-      iina.menu.item("搜索：" + shorten(info.query) + "（" + primary.name + "）" +
+      iina.menu.item(t("menuSearch", shorten(info.query), primary.name) +
         (recordingMode ? "  " + prettyKey("Meta+S") : ""), function () {
         openSearch(primary.id, false);
       }, menuOptions("Meta+S"))
     );
   } else {
-    iina.menu.addItem(iina.menu.item("尚未配置搜索引擎", null, { enabled: false }));
+    iina.menu.addItem(iina.menu.item(t("menuNoEngines"), null, { enabled: false }));
   }
 
   iina.menu.addItem(iina.menu.separator());
-  iina.menu.addItem(iina.menu.item("当前文件", null, { enabled: false }));
-  iina.menu.addItem(iina.menu.item("  原始：" + shorten(info.filename, 60), null, { enabled: false }));
-  iina.menu.addItem(iina.menu.item("  关键词：" + shorten(info.query, 60), null, { enabled: false }));
+  iina.menu.addItem(iina.menu.item(t("menuCurrentFile"), null, { enabled: false }));
+  iina.menu.addItem(iina.menu.item(t("menuRaw", shorten(info.filename, 60)), null, { enabled: false }));
+  iina.menu.addItem(iina.menu.item(t("menuQuery", shorten(info.query, 60)), null, { enabled: false }));
   iina.menu.addItem(iina.menu.separator());
 
   engines.forEach(function (engine) {
-    var title = "在 " + engine.name + " 搜索";
+    var title = t("menuSearchOn", engine.name);
     if (recordingMode && engine.key) title += "  " + prettyKey(engine.key);
     iina.menu.addItem(
       iina.menu.item(title, (function (id) {
@@ -695,13 +847,13 @@ function buildMenu() {
   });
 
   iina.menu.addItem(
-    iina.menu.item("复制文件名（无扩展名）" + (recordingMode && copyKey ? "  " + prettyKey(copyKey) : ""),
+    iina.menu.item(t("menuCopyFilename") + (recordingMode && copyKey ? "  " + prettyKey(copyKey) : ""),
       function () { copyCurrent(); }, menuOptions(copyKey))
   );
 
   if (engines.length) {
     iina.menu.addItem(
-      iina.menu.item("用完整文件名搜索" + (recordingMode ? "  " + prettyKey("Meta+R") : ""), function () {
+      iina.menu.item(t("menuRawSearch") + (recordingMode ? "  " + prettyKey("Meta+R") : ""), function () {
         openSearch(engines[0].id, true);
       }, menuOptions("Meta+R"))
     );
@@ -709,7 +861,7 @@ function buildMenu() {
 
   iina.menu.addItem(iina.menu.separator());
   iina.menu.addItem(
-    iina.menu.item("打开 Media Search 面板" + (recordingMode ? "  " + prettyKey("Meta+K") : ""), function () {
+    iina.menu.item(t("menuOpenPanel") + (recordingMode ? "  " + prettyKey("Meta+K") : ""), function () {
       showSidebar();
     }, menuOptions("Meta+K"))
   );
@@ -847,6 +999,7 @@ function buildPayload(extra) {
   var copyTarget = getPref("copyTarget") || "filename";
 
   var payload = {
+    lang: LANG,
     hasMedia: !!info,
     filename: info ? info.filename : "",
     query: info ? info.query : "",
@@ -862,7 +1015,7 @@ function buildPayload(extra) {
       : "",
     warnings: collectWarnings(engines, copyKey).concat(
       failedKeys.length
-        ? ["热键 " + failedKeys.join("、") + " 无法被 IINA 识别，已跳过；换一个组合键即可"]
+        ? [t("warnFailedKeys", failedKeys.join(t("listSeparator")))]
         : []
     ),
     message: (extra && extra.message) || "",
@@ -1044,12 +1197,12 @@ function handleCommand(payload) {
   }
 
   if (type === "add-engine") {
-    var engine = { id: newEngineId(), name: "新搜索引擎", tpl: "https://www.google.com/search?q={q}", key: "" };
+    var engine = { id: newEngineId(), name: t("newEngineName"), tpl: "https://www.google.com/search?q={q}", key: "" };
     engines.push(engine);
     if (saveEngines(engines)) {
-      pushState({ message: "已添加，请填写名称、地址和热键", messageKind: "ok", savedId: engine.id });
+      pushState({ message: t("msgAdded"), messageKind: "ok", savedId: engine.id });
     } else {
-      pushState({ message: "保存失败", messageKind: "error" });
+      pushState({ message: t("msgSaveFailed"), messageKind: "error" });
     }
     return;
   }
@@ -1057,13 +1210,13 @@ function handleCommand(payload) {
   if (type === "delete-engine") {
     var remaining = engines.filter(function (item) { return item.id !== payload.id; });
     if (remaining.length === engines.length) {
-      pushState({ message: "没有找到要删除的搜索引擎", messageKind: "error" });
+      pushState({ message: t("msgDeleteNotFound"), messageKind: "error" });
       return;
     }
     if (saveEngines(remaining)) {
-      pushState({ message: "已删除", messageKind: "ok" });
+      pushState({ message: t("msgDeleted"), messageKind: "ok" });
     } else {
-      pushState({ message: "保存失败", messageKind: "error" });
+      pushState({ message: t("msgSaveFailed"), messageKind: "error" });
     }
     return;
   }
@@ -1075,26 +1228,26 @@ function handleCommand(payload) {
       if (engines[i].id === target.id) found = engines[i];
     }
     if (!found) {
-      pushState({ message: "搜索引擎已不存在，请刷新面板", messageKind: "error" });
+      pushState({ message: t("msgEngineGone"), messageKind: "error" });
       return;
     }
 
     var normalizedKey = normalizeKey(target.key);
     var keyInvalid = normalizedKey === null;
 
-    found.name = String(target.name || "").trim() || "未命名";
+    found.name = String(target.name || "").trim() || t("untitled");
     found.tpl = String(target.tpl || "").trim();
     if (!keyInvalid) found.key = normalizedKey;
 
     if (saveEngines(engines)) {
       pushState({
-        message: keyInvalid ? "热键无法识别，已保留原热键（示例：Alt+1、Meta+D、F2）" : "",
+        message: keyInvalid ? t("msgKeyInvalid") : "",
         messageKind: keyInvalid ? "error" : "",
         savedId: found.id,
         savedKey: keyInvalid ? "" : normalizedKey,
       });
     } else {
-      pushState({ message: "保存失败", messageKind: "error" });
+      pushState({ message: t("msgSaveFailed"), messageKind: "error" });
     }
     return;
   }
@@ -1102,26 +1255,26 @@ function handleCommand(payload) {
   if (type === "set-copy-key") {
     var copyNormalized = normalizeKey(payload.key);
     if (copyNormalized === null) {
-      pushState({ message: "热键无法识别，示例：Alt+c、Meta+D、F2", messageKind: "error" });
+      pushState({ message: t("msgKeyInvalidCopy"), messageKind: "error" });
       return;
     }
     setPref("copyKey", copyNormalized);
-    pushState({ message: "复制热键已更新为 " + (copyNormalized || "（空）"), messageKind: "ok", savedKey: copyNormalized });
+    pushState({ message: t("msgCopyKeySet", copyNormalized || t("emptyLabel")), messageKind: "ok", savedKey: copyNormalized });
     return;
   }
 
   if (type === "set-copy-target") {
     var target2 = payload.value === "query" ? "query" : "filename";
     setPref("copyTarget", target2);
-    pushState({ message: "复制内容已切换", messageKind: "ok" });
+    pushState({ message: t("msgCopyTargetChanged"), messageKind: "ok" });
     return;
   }
 
   if (type === "reset-engines") {
     if (saveEngines(defaultEngines())) {
-      pushState({ message: "已恢复默认搜索引擎", messageKind: "ok" });
+      pushState({ message: t("msgEnginesReset"), messageKind: "ok" });
     } else {
-      pushState({ message: "保存失败", messageKind: "error" });
+      pushState({ message: t("msgSaveFailed"), messageKind: "error" });
     }
     return;
   }
@@ -1145,6 +1298,7 @@ function handleCommand(payload) {
 }
 
 ensureMigrated();
+syncDefaultNames();
 rebindHotkeys();
 // 只在这里构建 JS 侧条目，不调 forceUpdate：此刻窗口/菜单控制器未必就绪，
 // 强制刷新有风险，等 window-loaded 再刷新。
@@ -1153,4 +1307,4 @@ try {
 } catch (e) {
   log("初始化菜单失败: " + e);
 }
-log("已加载 v1.3.1");
+log("已加载 v1.4.0 (" + LANG + ")");

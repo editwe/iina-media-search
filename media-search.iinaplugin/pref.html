@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 
 <head>
   <meta charset="UTF-8" />
@@ -8,48 +8,48 @@
 
 <body>
   <div class="pref-section">
-    文件名清洗
-    <p class="small secondary pref-help">
+    <span data-i18n="cleanSection">文件名清洗</span>
+    <p class="small secondary pref-help" data-i18n="cleanHelp">
       文件名里通常带有分辨率、编码格式、发布组等信息，会干扰搜索结果。
       插件默认把它们剔除，只留下影片 / 剧集名称。
     </p>
     <div class="pref-help">
       <input type="checkbox" id="cleanName" data-pref-key="cleanName" />
-      <label for="cleanName">去掉压制信息（推荐）</label>
+      <label for="cleanName" data-i18n="cleanLabel">去掉压制信息（推荐）</label>
     </div>
     <div class="pref-help">
       <input type="checkbox" id="keepEpisode" data-pref-key="keepEpisode" />
-      <label for="keepEpisode">保留季集号（如 Arcane S02E01）</label>
+      <label for="keepEpisode" data-i18n="keepEpisodeLabel">保留季集号（如 Arcane S02E01）</label>
     </div>
     <div class="pref-help">
       <input type="checkbox" id="showOSD" data-pref-key="showOSD" />
-      <label for="showOSD">执行搜索 / 复制时在画面上显示提示</label>
+      <label for="showOSD" data-i18n="osdLabel">执行搜索 / 复制时在画面上显示提示</label>
     </div>
   </div>
 
   <div class="pref-section">
-    复制内容
-    <p class="small secondary pref-help">
+    <span data-i18n="copySection">复制内容</span>
+    <p class="small secondary pref-help" data-i18n="copyHelp">
       侧边栏面板的「复制」按钮和 ⌥C 热键会复制下面选定的内容。
     </p>
     <div class="pref-help">
       <input type="radio" id="copy-filename" name="copyTarget" value="filename" data-pref-key="copyTarget" />
-      <label for="copy-filename">文件名（不含扩展名）</label>
+      <label for="copy-filename" data-i18n="copyFilenameLabel">文件名（不含扩展名）</label>
     </div>
     <div class="pref-help">
       <input type="radio" id="copy-query" name="copyTarget" value="query" data-pref-key="copyTarget" />
-      <label for="copy-query">清洗后的关键词</label>
+      <label for="copy-query" data-i18n="copyQueryLabel">清洗后的关键词</label>
     </div>
   </div>
 
   <div class="pref-section">
-    搜索引擎与热键
-    <p class="small secondary pref-help">
+    <span data-i18n="enginesSection">搜索引擎与热键</span>
+    <p class="small secondary pref-help" data-i18n-html="enginesHelp1">
       搜索引擎的添加、删除、改名、URL 模板和热键都在<strong>侧边栏面板</strong>里管理：
       播放视频后按 <strong>⌘⇧K</strong> 打开（或菜单栏 → 插件 → 打开 Media Search 面板）。
       面板里改完立即生效，无需重启 IINA。
     </p>
-    <p class="small secondary pref-help">
+    <p class="small secondary pref-help" data-i18n-html="enginesHelp2">
       列表中的<strong>第一个引擎</strong>即默认引擎，对应 ⌘⇧S。默认热键为 ⌥1–⌥5。
       热键框点一下再按组合键即可录入，也可以手输 <code>Alt+3</code>、<code>Meta+D</code>、<code>F2</code>；
       留空表示不绑定快捷键。
@@ -57,16 +57,71 @@
   </div>
 
   <div class="pref-section">
-    关于
+    <span data-i18n="aboutSection">关于</span>
     <p class="small secondary pref-help">
-      Media Search 1.3.1 · 作者 editwe ·
-      项目地址 <strong>github.com/editwe/iina-media-search</strong>
+      Media Search 1.4.0 · <span data-i18n="aboutBy">作者</span> editwe ·
+      <strong>github.com/editwe/iina-media-search</strong>
     </p>
-    <p class="small secondary pref-help">
+    <p class="small secondary pref-help" data-i18n="aboutHelp">
       播放时读取当前文件名，清洗后在豆瓣 / IMDb / TMDB 或你添加的任意站点搜索。
       使用问题、建议或新引擎模板，都欢迎到项目主页提 issue。
     </p>
   </div>
+
+  <script>
+    var LANG = /^zh/i.test(navigator.language || "") ? "zh" : "en";
+    document.documentElement.lang = LANG === "zh" ? "zh-CN" : "en";
+
+    var I18N = {
+      zh: {
+        cleanSection: "文件名清洗",
+        cleanHelp: "文件名里通常带有分辨率、编码格式、发布组等信息，会干扰搜索结果。插件默认把它们剔除，只留下影片 / 剧集名称。",
+        cleanLabel: "去掉压制信息（推荐）",
+        keepEpisodeLabel: "保留季集号（如 Arcane S02E01）",
+        osdLabel: "执行搜索 / 复制时在画面上显示提示",
+        copySection: "复制内容",
+        copyHelp: "侧边栏面板的「复制」按钮和 ⌥C 热键会复制下面选定的内容。",
+        copyFilenameLabel: "文件名（不含扩展名）",
+        copyQueryLabel: "清洗后的关键词",
+        enginesSection: "搜索引擎与热键",
+        enginesHelp1: "搜索引擎的添加、删除、改名、URL 模板和热键都在<strong>侧边栏面板</strong>里管理：播放视频后按 <strong>⌘⇧K</strong> 打开（或菜单栏 → 插件 → 打开 Media Search 面板）。面板里改完立即生效，无需重启 IINA。",
+        enginesHelp2: "列表中的<strong>第一个引擎</strong>即默认引擎，对应 ⌘⇧S。默认热键为 ⌥1–⌥5。热键框点一下再按组合键即可录入，也可以手输 <code>Alt+3</code>、<code>Meta+D</code>、<code>F2</code>；留空表示不绑定快捷键。",
+        aboutSection: "关于",
+        aboutBy: "作者",
+        aboutHelp: "播放时读取当前文件名，清洗后在豆瓣 / IMDb / TMDB 或你添加的任意站点搜索。使用问题、建议或新引擎模板，都欢迎到项目主页提 issue。"
+      },
+      en: {
+        cleanSection: "Filename cleaning",
+        cleanHelp: "Release filenames carry resolution, codec and group tags that pollute search results. The plugin strips them by default and keeps just the title.",
+        cleanLabel: "Strip release tags (recommended)",
+        keepEpisodeLabel: "Keep season/episode (e.g. Arcane S02E01)",
+        osdLabel: "Show an on-screen message when searching or copying",
+        copySection: "What gets copied",
+        copyHelp: "The Copy button in the sidebar panel and the ⌥C hotkey copy whatever is selected below.",
+        copyFilenameLabel: "Filename (without extension)",
+        copyQueryLabel: "Cleaned query",
+        enginesSection: "Search engines & hotkeys",
+        enginesHelp1: "Add, rename, re-template or delete engines in the <strong>sidebar panel</strong>: press <strong>⌘⇧K</strong> while playing (or menu bar → Plugins → Open Media Search Panel). Changes take effect immediately — no restart.",
+        enginesHelp2: "The <strong>first engine</strong> in the list is the default one, bound to ⌘⇧S. Defaults are ⌥1–⌥5. Click a hotkey field and press a combination, or type it by hand (<code>Alt+3</code>, <code>Meta+D</code>, <code>F2</code>). Leave it empty to leave the action unbound.",
+        aboutSection: "About",
+        aboutBy: "by",
+        aboutHelp: "Reads the file you are playing, cleans the name and searches Douban / IMDb / TMDB or any site you add. Bug reports, ideas and new engine templates are welcome on the project page."
+      }
+    };
+
+    function t(key) {
+      var table = I18N[LANG] || I18N.en;
+      var text = table[key] !== undefined ? table[key] : I18N.en[key];
+      return text === undefined ? key : text;
+    }
+
+    Array.prototype.forEach.call(document.querySelectorAll("[data-i18n]"), function (el) {
+      el.textContent = t(el.getAttribute("data-i18n"));
+    });
+    Array.prototype.forEach.call(document.querySelectorAll("[data-i18n-html]"), function (el) {
+      el.innerHTML = t(el.getAttribute("data-i18n-html"));
+    });
+  </script>
 </body>
 
 </html>

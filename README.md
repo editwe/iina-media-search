@@ -13,10 +13,11 @@ It reads the current filename, strips the release noise (`1080p`, `WEB-DL`, `DDP
 
 | Light | Dark |
 | --- | --- |
-| <img src="docs/images/panel-light.png" width="300" alt="Media Search panel, light appearance"> | <img src="docs/images/panel-dark.png" width="300" alt="Media Search panel, dark appearance"> |
+| <img src="docs/images/panel-en-light.png" width="300" alt="Media Search panel, light appearance"> | <img src="docs/images/panel-en-dark.png" width="300" alt="Media Search panel, dark appearance"> |
 
 ## Features
 
+- **Bilingual UI** — the sidebar panel, menu items, on-screen messages and the settings page follow your system language: Chinese for `zh-*`, English for everything else.
 - **Filename cleaning** — removes resolution, source, codec, audio, release group and subtitle tags, keeps title / year / season-episode.
 - **One-key search** — per-engine hotkeys, plus buttons in the sidebar panel.
 - **Editable engine list** — add, rename, re-template or delete any engine, including the five built-ins. `{q}` is the keyword placeholder.
@@ -39,7 +40,7 @@ editwe/iina-media-search
 
 and confirm. IINA pulls the `.iinaplgz` from the latest release, so it can check for updates for you later.
 
-**From the package.** Download [`media-search-1.3.1.iinaplgz`](https://github.com/editwe/iina-media-search/releases/latest/download/media-search-1.3.1.iinaplgz) and double-click it, or use **Settings → Plugins → 安装本地插件… / Install Local Plugin…** and pick the file. That dialog only accepts `.iinaplgz` — a bare `.iinaplugin` folder cannot be selected there.
+**From the package.** Download [`media-search-1.4.0.iinaplgz`](https://github.com/editwe/iina-media-search/releases/latest/download/media-search-1.4.0.iinaplgz) and double-click it, or use **Settings → Plugins → 安装本地插件… / Install Local Plugin…** and pick the file. That dialog only accepts `.iinaplgz` — a bare `.iinaplugin` folder cannot be selected there.
 
 **By hand.** Clone and copy the bundle into IINA's plugin folder:
 
@@ -182,6 +183,11 @@ The clipboard goes through `osascript`, which needs the `file-system` permission
 ```
 
 ## Changelog
+
+**1.4.0**
+- English UI. The panel, the menu, the OSD messages and the settings page now pick a language from the system (`utils.preferredLocalizations()` in the plugin, `navigator.language` in the web views): Chinese for `zh-*`, English otherwise. `Info.json` gained a `localized` block so IINA shows the right store description too.
+- Built-in engine names follow the UI language: 豆瓣 / 必应 in Chinese, Douban / Bing in English. Names you changed yourself are left alone.
+- README now ships separate English and Chinese screenshots, rendered from the same panel.
 
 **1.3.1**
 - Fixed the panel showing nothing until **恢复默认** was clicked. `sidebar.loadFile()` clears the message hub's listeners when it finishes, so the panel was registering into a dead hub. Listeners are now attached after the load, the panel pulls the state itself on startup (with backoff retries), and any command from the panel marks it ready. Reloads are throttled to one per 3 s so the panel cannot erase itself in a loop.

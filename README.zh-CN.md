@@ -13,10 +13,11 @@
 
 | 浅色 | 深色 |
 | --- | --- |
-| <img src="docs/images/panel-light.png" width="300" alt="Media Search 面板（浅色）"> | <img src="docs/images/panel-dark.png" width="300" alt="Media Search 面板（深色）"> |
+| <img src="docs/images/panel-zh-light.png" width="300" alt="Media Search 面板（浅色）"> | <img src="docs/images/panel-zh-dark.png" width="300" alt="Media Search 面板（深色）"> |
 
 ## 功能
 
+- **中英双语界面** — 侧边栏面板、菜单、画面提示、设置页都跟着系统语言走：`zh-*` 用中文，其他语言一律英文。
 - **文件名清洗** — 去掉分辨率、来源、编码、音轨、发布组、字幕标记，保留片名 / 年份 / 季集号。
 - **一键搜索** — 每个引擎一个热键，面板里也有一排按钮。
 - **引擎可增删改** — 包括内置的五个，全都能改能删。`{q}` 是关键词占位符。
@@ -39,7 +40,7 @@ editwe/iina-media-search
 
 确认即可。IINA 会从 latest release 里取 `.iinaplgz` 安装，以后还能帮你检查更新。
 
-**用安装包**：下载 [`media-search-1.3.1.iinaplgz`](https://github.com/editwe/iina-media-search/releases/latest/download/media-search-1.3.1.iinaplgz)，双击它；或者走 **设置 → 插件 → 安装本地插件…** 选中这个文件。这个对话框只认 `.iinaplgz`，光是一个 `.iinaplugin` 文件夹是选不了的。
+**用安装包**：下载 [`media-search-1.4.0.iinaplgz`](https://github.com/editwe/iina-media-search/releases/latest/download/media-search-1.4.0.iinaplgz)，双击它；或者走 **设置 → 插件 → 安装本地插件…** 选中这个文件。这个对话框只认 `.iinaplgz`，光是一个 `.iinaplugin` 文件夹是选不了的。
 
 **手动复制**：克隆仓库，把插件包拷进 IINA 的插件目录：
 
@@ -182,6 +183,12 @@ Spider-Man.No.Way.Home.2021.1080p.WEB-DL.mkv                →  Spider-Man No W
 ```
 
 ## 更新日志
+
+**1.4.0**
+
+- 有了英文界面。面板、菜单、画面提示、设置页都按系统语言选：插件侧用 `utils.preferredLocalizations()`，网页侧用 `navigator.language`，`zh-*` 走中文，其他一律英文。`Info.json` 加了 `localized` 段，IINA 里的插件简介也会跟着语言变。
+- 内置引擎名跟着界面语言走：中文下是 豆瓣 / 必应，英文下是 Douban / Bing；你自己改过的名字不会被覆盖。
+- 两份 README 各自配了对应语言的截图（同一套面板渲染出来的中英两版）。
 
 **1.3.1**
 

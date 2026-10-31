@@ -215,8 +215,8 @@
 </head>
 
 <body>
-  <div class="label">搜索关键词</div>
-  <div class="query" id="query">加载中…</div>
+  <div class="label" data-i18n="queryLabel">搜索关键词</div>
+  <div class="query" id="query" data-i18n="loading">加载中…</div>
   <div class="filename" id="filename"></div>
 
   <div class="buttons" id="search-buttons"></div>
@@ -224,10 +224,10 @@
   <div class="divider"></div>
 
   <div class="section-head">
-    <span class="title">搜索引擎</span>
+    <span class="title" data-i18n="engines">搜索引擎</span>
     <span class="actions">
-      <button class="ghost" id="add">+ 添加</button>
-      <button class="ghost" id="reset">恢复默认</button>
+      <button class="ghost" id="add" data-i18n="addBtn">+ 添加</button>
+      <button class="ghost" id="reset" data-i18n="resetBtn">恢复默认</button>
     </span>
   </div>
 
@@ -239,23 +239,113 @@
   <div class="divider"></div>
 
   <div class="section-head">
-    <span class="title">复制文件名</span>
+    <span class="title" data-i18n="copyTitle">复制文件名</span>
   </div>
 
   <div class="row">
-    <label for="copy-key">热键</label>
-    <input type="text" id="copy-key" placeholder="点这里再按组合键" />
+    <label for="copy-key" data-i18n="hotkey">热键</label>
+    <input type="text" id="copy-key" data-i18n-placeholder="recorderPlaceholder" placeholder="点这里再按组合键" />
   </div>
   <div class="row">
-    <label><input type="radio" name="copy-target" value="filename" data-copy-target="1" /> 文件名（不含扩展名）</label>
-    <label><input type="radio" name="copy-target" value="query" data-copy-target="1" /> 清洗后关键词</label>
+    <label><input type="radio" name="copy-target" value="filename" data-copy-target="1" /> <span data-i18n="copyFilename">文件名（不含扩展名）</span></label>
+    <label><input type="radio" name="copy-target" value="query" data-copy-target="1" /> <span data-i18n="copyQuery">清洗后关键词</span></label>
   </div>
   <div class="hint" id="copy-preview"></div>
 
-  <div class="footnote">
+  <div class="footnote" data-i18n-html="footnote">
     ⌥1–⌥5 对应前 5 个引擎 · ⌥C 复制 · ⌘⇧S 首个引擎 · ⌘⇧R 原名 · ⌘⇧K 面板<br />
     热键框点一下直接按键录入，Esc 取消；⌘ 组合若被系统菜单拦下，可手输 <code>Meta+D</code>。
   </div>
+
+  <script>
+    // MARK: - 语言 / Localisation
+    // IINA 的侧边栏是普通 WebView，直接用 navigator.language。
+    // 截图脚本和调试可以用 ?lang=en|zh 覆盖。
+    var LANG = (function () {
+      var forced = /[?&]lang=([a-zA-Z-]+)/.exec(location.search);
+      var tag = forced ? forced[1] : (navigator.language || "en");
+      return /^zh/i.test(tag) ? "zh" : "en";
+    })();
+
+    document.documentElement.lang = LANG === "zh" ? "zh-CN" : "en";
+
+    var I18N = {
+      zh: {
+        queryLabel: "搜索关键词",
+        loading: "加载中…",
+        noMedia: "没有正在播放的媒体",
+        empty: "（空）",
+        engines: "搜索引擎",
+        addBtn: "+ 添加",
+        resetBtn: "恢复默认",
+        resetConfirm: "确认恢复？",
+        copyTitle: "复制文件名",
+        copyBtn: "复制",
+        copyFilename: "文件名（不含扩展名）",
+        copyQuery: "清洗后关键词",
+        copyPreviewPrefix: "将复制：",
+        hotkey: "热键",
+        urlLabel: "地址",
+        namePlaceholder: "显示名称",
+        tplPlaceholder: "URL 模板，{q} 表示关键词",
+        recorderPlaceholder: "点这里再按组合键",
+        deleteTitle: "删除这个搜索引擎",
+        emptyEngines: "还没有搜索引擎，点「+ 添加」新建一个。",
+        renderError: "面板渲染异常：%1",
+        footnote: "⌥1–⌥5 对应前 5 个引擎 · ⌥C 复制 · ⌘⇧S 首个引擎 · ⌘⇧R 原名 · ⌘⇧K 面板<br />热键框点一下直接按键录入，Esc 取消；⌘ 组合若被系统菜单拦下，可手输 <code>Meta+D</code>。"
+      },
+      en: {
+        queryLabel: "SEARCH QUERY",
+        loading: "Loading…",
+        noMedia: "Nothing is playing",
+        empty: "(empty)",
+        engines: "Search engines",
+        addBtn: "+ Add",
+        resetBtn: "Restore defaults",
+        resetConfirm: "Are you sure?",
+        copyTitle: "Copy filename",
+        copyBtn: "Copy",
+        copyFilename: "Filename (no extension)",
+        copyQuery: "Cleaned query",
+        copyPreviewPrefix: "Will copy: ",
+        hotkey: "Key",
+        urlLabel: "URL",
+        namePlaceholder: "Display name",
+        tplPlaceholder: "URL template, {q} is the query",
+        recorderPlaceholder: "Click, then press a key combination",
+        deleteTitle: "Delete this search engine",
+        emptyEngines: "No search engines yet — click “+ Add” to create one.",
+        renderError: "Panel failed to render: %1",
+        footnote: "⌥1–⌥5 map to the first five engines · ⌥C copies · ⌘⇧S primary engine · ⌘⇧R raw filename · ⌘⇧K panel<br />Click a key field and press a combination; Esc cancels. If the system menu swallows a ⌘ chord, type it yourself, e.g. <code>Meta+D</code>."
+      }
+    };
+
+    function t(key) {
+      var table = I18N[LANG] || I18N.en;
+      var text = table[key];
+      if (text === undefined) text = I18N.en[key];
+      if (text === undefined) return key;
+      for (var i = 1; i < arguments.length; i++) {
+        text = text.replace("%" + i, arguments[i]);
+      }
+      return text;
+    }
+
+    function applyStaticText() {
+      Array.prototype.forEach.call(document.querySelectorAll("[data-i18n]"), function (el) {
+        var value = t(el.getAttribute("data-i18n"));
+        if (value) el.textContent = value;
+      });
+      Array.prototype.forEach.call(document.querySelectorAll("[data-i18n-html]"), function (el) {
+        var value = t(el.getAttribute("data-i18n-html"));
+        if (value) el.innerHTML = value;
+      });
+      Array.prototype.forEach.call(document.querySelectorAll("[data-i18n-placeholder]"), function (el) {
+        var value = t(el.getAttribute("data-i18n-placeholder"));
+        if (value) el.placeholder = value;
+      });
+    }
+  </script>
 
   <script>
     var state = null;
@@ -320,7 +410,7 @@
      * 带修饰键的组合会被拦下来写入；普通字符照常输入。
      */
     function bindKeyRecorder(input, commit) {
-      input.placeholder = "点这里再按组合键";
+      input.placeholder = t("recorderPlaceholder");
       var initial = "";
       input.addEventListener("focus", function () {
         initial = input.value;
@@ -407,12 +497,12 @@
       box.innerHTML = "";
 
       if (!current.hasMedia) {
-        $("query").textContent = "没有正在播放的媒体";
+        $("query").textContent = t("noMedia");
         $("filename").textContent = "";
         return;
       }
 
-      $("query").textContent = current.query || "（空）";
+      $("query").textContent = current.query || t("empty");
       $("filename").textContent = current.filename || "";
 
       current.engines.forEach(function (engine, index) {
@@ -426,7 +516,7 @@
       });
 
       var copyBtn = document.createElement("button");
-      copyBtn.textContent = "复制" + (current.copyKey ? " " + keyToHuman(current.copyKey) : "");
+      copyBtn.textContent = t("copyBtn") + (current.copyKey ? " " + keyToHuman(current.copyKey) : "");
       copyBtn.addEventListener("click", function () {
         send("copy");
       });
@@ -459,13 +549,13 @@
       var nameInput = document.createElement("input");
       nameInput.type = "text";
       nameInput.value = engine.name;
-      nameInput.placeholder = "显示名称";
+      nameInput.placeholder = t("namePlaceholder");
       nameInput.setAttribute("data-name-for", engine.id);
 
       var del = document.createElement("button");
       del.className = "danger";
       del.textContent = "×";
-      del.title = "删除这个搜索引擎";
+      del.title = t("deleteTitle");
       del.addEventListener("click", function () {
         send("delete-engine", { id: engine.id });
       });
@@ -477,7 +567,7 @@
       keyField.className = "field";
       var keyLabel = document.createElement("span");
       keyLabel.className = "field-label";
-      keyLabel.textContent = "热键";
+      keyLabel.textContent = t("hotkey");
       var keyInput = document.createElement("input");
       keyInput.type = "text";
       keyInput.value = engine.key || "";
@@ -489,11 +579,11 @@
       tplField.className = "field";
       var tplLabel = document.createElement("span");
       tplLabel.className = "field-label";
-      tplLabel.textContent = "地址";
+      tplLabel.textContent = t("urlLabel");
       var tplInput = document.createElement("input");
       tplInput.type = "text";
       tplInput.value = engine.tpl;
-      tplInput.placeholder = "URL 模板，{q} 表示关键词";
+      tplInput.placeholder = t("tplPlaceholder");
       tplInput.setAttribute("data-tpl-for", engine.id);
       tplField.appendChild(tplLabel);
       tplField.appendChild(tplInput);
@@ -544,7 +634,7 @@
       if (!current.engines.length) {
         var empty = document.createElement("div");
         empty.className = "empty";
-        empty.textContent = "还没有搜索引擎，点「+ 添加」新建一个。";
+        empty.textContent = t("emptyEngines");
         list.appendChild(empty);
         return;
       }
@@ -564,7 +654,7 @@
       });
       var preview = $("copy-preview");
       preview.textContent = current.hasMedia
-        ? "将复制：" + (current.copyPreview || "（空）")
+        ? t("copyPreviewPrefix") + (current.copyPreview || t("empty"))
         : "";
     }
 
@@ -587,7 +677,7 @@
         applySavedKey(state);
       } catch (e) {
         // 单个模块出错不应该让整块面板变成白板，至少把原因显示出来
-        showMessage("面板渲染异常：" + (e && e.message ? e.message : e), "error");
+        showMessage(t("renderError", e && e.message ? e.message : e), "error");
         return;
       }
 
@@ -595,6 +685,8 @@
         showMessage(state.message, state.messageKind);
       }
     }
+
+    applyStaticText();
 
     $("add").addEventListener("click", function () {
       send("add-engine");
@@ -604,15 +696,15 @@
       var btn = $("reset");
       if (!resetArmed) {
         resetArmed = true;
-        btn.textContent = "确认恢复？";
+        btn.textContent = t("resetConfirm");
         setTimeout(function () {
           resetArmed = false;
-          btn.textContent = "恢复默认";
+          btn.textContent = t("resetBtn");
         }, 3000);
         return;
       }
       resetArmed = false;
-      btn.textContent = "恢复默认";
+      btn.textContent = t("resetBtn");
       send("reset-engines");
     });
 
