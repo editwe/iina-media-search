@@ -175,6 +175,7 @@ The clipboard goes through `osascript`, which needs the `file-system` permission
 ├── README.zh-CN.md           Chinese readme
 ├── LICENSE                   MIT
 ├── docs/images/              screenshots
+├── tools/render-screenshots.py  regenerates the four screenshots above
 └── media-search.iinaplugin/
     ├── Info.json             manifest: permissions, preference defaults, default engines
     ├── index.js              cleaning, engine storage, hotkeys, menu, clipboard, IPC

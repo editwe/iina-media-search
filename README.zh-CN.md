@@ -175,6 +175,7 @@ Spider-Man.No.Way.Home.2021.1080p.WEB-DL.mkv                →  Spider-Man No W
 ├── README.zh-CN.md           本文件
 ├── LICENSE                   MIT
 ├── docs/images/              截图
+├── tools/render-screenshots.py  重新生成上面四张截图
 └── media-search.iinaplugin/
     ├── Info.json             插件清单：权限、偏好默认值、默认引擎
     ├── index.js              清洗、引擎存储、热键、菜单、剪贴板、面板 IPC
