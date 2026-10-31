@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    * { box-sizing: border-box; }
+
+    html, body { margin: 0; padding: 0; }
+
+    body {
+      padding: 12px;
+      font-size: 13px;
+      line-height: 1.5;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+      color: #1f1f1f;
+      background: transparent;
+    }
+
+    .label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      opacity: 0.45;
+      margin-bottom: 4px;
+    }
+
+    .query {
+      font-size: 14px;
+      font-weight: 500;
+      word-break: break-all;
+      margin-bottom: 2px;
+    }
+
+    .filename {
+      font-size: 11px;
+      opacity: 0.45;
+      word-break: break-all;
+      margin-bottom: 12px;
+    }
+
+    .buttons { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    button {
+      font: inherit;
+      font-size: 12px;
+      padding: 4px 11px;
+      border-radius: 6px;
+      border: 0.5px solid rgba(0, 0, 0, 0.16);
+      background: rgba(0, 0, 0, 0.05);
+      color: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    button:hover { background: rgba(0, 0, 0, 0.1); }
+
+    button.primary { background: #2f6fed; color: #fff; border-color: transparent; }
+    button.primary:hover { background: #2559c9; }
+
+    button.ghost {
+      background: none;
+      border-color: rgba(0, 0, 0, 0.16);
+      padding: 3px 8px;
+      font-size: 11px;
+    }
+
+    button.danger {
+      background: none;
+      border: none;
+      color: #d13b3b;
+      font-size: 15px;
+      line-height: 1;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    button.danger:hover { background: rgba(209, 59, 59, 0.12); }
+
+    .divider {
+      height: 1px;
+      background: rgba(0, 0, 0, 0.09);
+      margin: 14px 0 12px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .section-head .title { font-size: 12px; font-weight: 500; }
+    .section-head .actions { display: flex; gap: 6px; }
+
+    .engine {
+      border: 0.5px solid rgba(0, 0, 0, 0.12);
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    .engine-top {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    input[type="text"] {
+      font: inherit;
+      font-size: 12px;
+      width: 100%;
+      padding: 3px 6px;
+      border-radius: 5px;
+      border: 0.5px solid rgba(0, 0, 0, 0.18);
+      background: #fff;
+      color: inherit;
+      min-width: 0;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #2f6fed;
+      box-shadow: 0 0 0 2px rgba(47, 111, 237, 0.15);
+    }
+
+    .field {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 5px;
+    }
+
+    .field .field-label {
+      flex: 0 0 auto;
+      font-size: 10px;
+      opacity: 0.45;
+      width: 24px;
+    }
+
+    input.recording {
+      border-color: #2f6fed;
+      box-shadow: 0 0 0 2px rgba(47, 111, 237, 0.22);
+      background: rgba(47, 111, 237, 0.06);
+    }
+
+    .hint {
+      font-size: 10px;
+      opacity: 0.45;
+      margin-top: 3px;
+      word-break: break-all;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 6px;
+      font-size: 11px;
+    }
+
+    .row label { opacity: 0.75; white-space: nowrap; }
+
+    .message {
+      font-size: 11px;
+      padding: 6px 8px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      display: none;
+    }
+
+    .message.ok { display: block; background: rgba(29, 158, 117, 0.12); color: #0f6e56; }
+    .message.error { display: block; background: rgba(209, 59, 59, 0.12); color: #a32d2d; }
+
+    .warnings {
+      font-size: 11px;
+      color: #854f0b;
+      background: rgba(239, 159, 39, 0.14);
+      border-radius: 6px;
+      padding: 6px 8px;
+      margin-bottom: 10px;
+      display: none;
+    }
+
+    .warnings div { margin: 1px 0; }
+
+    .empty {
+      font-size: 12px;
+      opacity: 0.45;
+      padding: 6px 0 10px;
+    }
+
+    .footnote {
+      font-size: 10px;
+      opacity: 0.45;
+      margin-top: 12px;
+      line-height: 1.6;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      body { color: #ececec; }
+      button { background: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.18); }
+      button:hover { background: rgba(255, 255, 255, 0.2); }
+      button.ghost { background: none; }
+      input[type="text"] { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.2); }
+      .divider { background: rgba(255, 255, 255, 0.12); }
+      .engine { border-color: rgba(255, 255, 255, 0.14); background: rgba(255, 255, 255, 0.03); }
+      .warnings { color: #f0c27b; }
+      .message.ok { color: #7fd6b8; }
+      .message.error { color: #f09595; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="label">搜索关键词</div>
+  <div class="query" id="query">加载中…</div>
+  <div class="filename" id="filename"></div>
+
+  <div class="buttons" id="search-buttons"></div>
+
+  <div class="divider"></div>
+
+  <div class="section-head">
+    <span class="title">搜索引擎</span>
+    <span class="actions">
+      <button class="ghost" id="add">+ 添加</button>
+      <button class="ghost" id="reset">恢复默认</button>
+    </span>
+  </div>
+
+  <div class="message" id="message"></div>
+  <div class="warnings" id="warnings"></div>
+
+  <div id="engine-list"></div>
+
+  <div class="divider"></div>
+
+  <div class="section-head">
+    <span class="title">复制文件名</span>
+  </div>
+
+  <div class="row">
+    <label for="copy-key">热键</label>
+    <input type="text" id="copy-key" placeholder="点这里再按组合键" />
+  </div>
+  <div class="row">
+    <label><input type="radio" name="copy-target" value="filename" data-copy-target="1" /> 文件名（不含扩展名）</label>
+    <label><input type="radio" name="copy-target" value="query" data-copy-target="1" /> 清洗后关键词</label>
+  </div>
+  <div class="hint" id="copy-preview"></div>
+
+  <div class="footnote">
+    ⌥1–⌥5 对应前 5 个引擎 · ⌥C 复制 · ⌘⇧S 首个引擎 · ⌘⇧R 原名 · ⌘⇧K 面板<br />
+    热键框点一下直接按键录入，Esc 取消；⌘ 组合若被系统菜单拦下，可手输 <code>Meta+D</code>。
+  </div>
+
+  <script>
+    var state = null;
+    var timers = {};
+    var resetArmed = false;
+    var messageTimer = null;
+
+    var MOD_SYMBOLS = { Meta: "⌘", Ctrl: "⌃", Alt: "⌥", Shift: "⇧" };
+
+    function keyToHuman(key) {
+      if (!key) return "";
+      return key.split("+").map(function (part) {
+        if (MOD_SYMBOLS[part]) return MOD_SYMBOLS[part];
+        if (part === "SPACE") return "␣";
+        if (part.length === 1 && /[a-z]/.test(part)) return part.toUpperCase();
+        return part;
+      }).join("");
+    }
+
+    // MARK: - 按键录入
+    // 用 event.code 取值，这样 ⌥1 不会因为 macOS 的字符映射变成 "¡"。
+
+    var KEY_NAME_MAP = {
+      Space: "SPACE", Escape: "ESC", Enter: "ENTER", Tab: "TAB", Backspace: "BS", Delete: "DEL",
+      ArrowLeft: "LEFT", ArrowRight: "RIGHT", ArrowUp: "UP", ArrowDown: "DOWN",
+      Home: "HOME", End: "END", PageUp: "PGUP", PageDown: "PGDN", Insert: "INS",
+      Minus: "-", Equal: "=", BracketLeft: "[", BracketRight: "]", Backslash: "\\",
+      Semicolon: ";", Quote: "'", Comma: ",", Period: ".", Slash: "/", Backquote: "`"
+    };
+
+    var MODIFIER_KEYS = ["Meta", "Control", "Alt", "Shift", "CapsLock"];
+
+    function keyFromEvent(event) {
+      if (MODIFIER_KEYS.indexOf(event.key) >= 0) return "";
+
+      var code = event.code || "";
+      var key = "";
+      if (/^Key[A-Z]$/.test(code)) key = code.slice(3).toLowerCase();
+      else if (/^Digit[0-9]$/.test(code)) key = code.slice(5);
+      else if (/^Numpad[0-9]$/.test(code)) key = "KP_" + code.slice(6);
+      else if (/^F([1-9]|1[0-9]|2[0-4])$/.test(code)) key = code;
+      else if (KEY_NAME_MAP[code]) key = KEY_NAME_MAP[code];
+      if (!key) return "";
+
+      var mods = [];
+      if (event.ctrlKey) mods.push("Ctrl");
+      if (event.altKey) mods.push("Alt");
+      if (event.shiftKey) mods.push("Shift");
+      if (event.metaKey) mods.push("Meta");
+
+      // 与 IINA 的规范一致：Shift + 字母写成大写字母
+      if (mods.indexOf("Shift") >= 0 && /^[a-z]$/.test(key)) {
+        key = key.toUpperCase();
+        mods.splice(mods.indexOf("Shift"), 1);
+      }
+
+      return mods.length ? mods.join("+") + "+" + key : key;
+    }
+
+    /**
+     * 让输入框支持「按下组合键即录入」，同时保留手输能力：
+     * 带修饰键的组合会被拦下来写入；普通字符照常输入。
+     */
+    function bindKeyRecorder(input, commit) {
+      input.placeholder = "点这里再按组合键";
+      var initial = "";
+      input.addEventListener("focus", function () {
+        initial = input.value;
+        input.select();
+        input.classList.add("recording");
+        send("recording", { on: true });
+      });
+      input.addEventListener("blur", function () {
+        input.classList.remove("recording");
+        send("recording", { on: false });
+        // 只有真的改过才保存，避免点一下输入框就弹提示
+        if (input.value.trim() !== initial) commit(input.value.trim());
+      });
+      input.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+          event.preventDefault();
+          input.blur();
+          return;
+        }
+
+        var hasMod = event.metaKey || event.ctrlKey || event.altKey;
+        if (!hasMod && (event.key === "Backspace" || event.key === "Delete")) {
+          if (!input.value) {
+            event.preventDefault();
+            initial = "";
+            commit("");
+          }
+          return;
+        }
+
+        var combo = keyFromEvent(event);
+        if (!combo) return;
+
+        var isFunctionKey = /^F([1-9]|1[0-9]|2[0-4])$/.test(combo);
+        // 裸字符/裸 Shift+字母照常输入，避免把普通打字当热键
+        if (combo.indexOf("+") < 0 && !isFunctionKey) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+        input.value = combo;
+        initial = combo;
+        commit(combo);
+      });
+    }
+
+    function $(id) { return document.getElementById(id); }
+
+    function isEditing() {
+      var el = document.activeElement;
+      return !!el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA");
+    }
+
+    function send(type, extra) {
+      var payload = { type: type };
+      if (extra) {
+        for (var k in extra) payload[k] = extra[k];
+      }
+      window.iina.postMessage("cmd", payload);
+    }
+
+    function debounce(name, fn, delay) {
+      if (timers[name]) clearTimeout(timers[name]);
+      timers[name] = setTimeout(fn, delay || 450);
+    }
+
+    function showMessage(text, kind) {
+      var box = $("message");
+      if (!text) {
+        box.className = "message";
+        box.textContent = "";
+        return;
+      }
+      box.className = "message " + (kind === "error" ? "error" : "ok");
+      box.textContent = text;
+      if (messageTimer) clearTimeout(messageTimer);
+      messageTimer = setTimeout(function () {
+        box.className = "message";
+        box.textContent = "";
+      }, 3200);
+    }
+
+    function renderSearch(current) {
+      var box = $("search-buttons");
+      box.innerHTML = "";
+
+      if (!current.hasMedia) {
+        $("query").textContent = "没有正在播放的媒体";
+        $("filename").textContent = "";
+        return;
+      }
+
+      $("query").textContent = current.query || "（空）";
+      $("filename").textContent = current.filename || "";
+
+      current.engines.forEach(function (engine, index) {
+        var btn = document.createElement("button");
+        btn.textContent = engine.name + (engine.key ? " " + keyToHuman(engine.key) : "");
+        if (index === 0) btn.className = "primary";
+        btn.addEventListener("click", function () {
+          send("search", { id: engine.id });
+        });
+        box.appendChild(btn);
+      });
+
+      var copyBtn = document.createElement("button");
+      copyBtn.textContent = "复制" + (current.copyKey ? " " + keyToHuman(current.copyKey) : "");
+      copyBtn.addEventListener("click", function () {
+        send("copy");
+      });
+      box.appendChild(copyBtn);
+    }
+
+    function renderWarnings(current) {
+      var box = $("warnings");
+      if (!current.warnings || !current.warnings.length) {
+        box.style.display = "none";
+        box.innerHTML = "";
+        return;
+      }
+      box.style.display = "block";
+      box.innerHTML = "";
+      current.warnings.forEach(function (text) {
+        var line = document.createElement("div");
+        line.textContent = "! " + text;
+        box.appendChild(line);
+      });
+    }
+
+    function buildEngineCard(engine) {
+      var card = document.createElement("div");
+      card.className = "engine";
+
+      var top = document.createElement("div");
+      top.className = "engine-top";
+
+      var nameInput = document.createElement("input");
+      nameInput.type = "text";
+      nameInput.value = engine.name;
+      nameInput.placeholder = "显示名称";
+      nameInput.setAttribute("data-name-for", engine.id);
+
+      var del = document.createElement("button");
+      del.className = "danger";
+      del.textContent = "×";
+      del.title = "删除这个搜索引擎";
+      del.addEventListener("click", function () {
+        send("delete-engine", { id: engine.id });
+      });
+
+      top.appendChild(nameInput);
+      top.appendChild(del);
+
+      var keyField = document.createElement("div");
+      keyField.className = "field";
+      var keyLabel = document.createElement("span");
+      keyLabel.className = "field-label";
+      keyLabel.textContent = "热键";
+      var keyInput = document.createElement("input");
+      keyInput.type = "text";
+      keyInput.value = engine.key || "";
+      keyInput.setAttribute("data-key-for", engine.id);
+      keyField.appendChild(keyLabel);
+      keyField.appendChild(keyInput);
+
+      var tplField = document.createElement("div");
+      tplField.className = "field";
+      var tplLabel = document.createElement("span");
+      tplLabel.className = "field-label";
+      tplLabel.textContent = "地址";
+      var tplInput = document.createElement("input");
+      tplInput.type = "text";
+      tplInput.value = engine.tpl;
+      tplInput.placeholder = "URL 模板，{q} 表示关键词";
+      tplInput.setAttribute("data-tpl-for", engine.id);
+      tplField.appendChild(tplLabel);
+      tplField.appendChild(tplInput);
+
+      function scheduleSave() {
+        debounce(engine.id, function () {
+          send("save-engine", {
+            engine: {
+              id: engine.id,
+              name: nameInput.value,
+              tpl: tplInput.value,
+              key: keyInput.value,
+            },
+          });
+        });
+      }
+
+      nameInput.addEventListener("input", scheduleSave);
+      nameInput.addEventListener("blur", scheduleSave);
+      tplInput.addEventListener("input", scheduleSave);
+      tplInput.addEventListener("blur", scheduleSave);
+
+      // 热键一录完就保存，不等防抖，这样菜单 / 监听能立刻生效
+      bindKeyRecorder(keyInput, function (value) {
+        if (keyInput.value !== value) keyInput.value = value;
+        send("save-engine", {
+          engine: {
+            id: engine.id,
+            name: nameInput.value,
+            tpl: tplInput.value,
+            key: value,
+          },
+        });
+      });
+
+      card.appendChild(top);
+      card.appendChild(keyField);
+      card.appendChild(tplField);
+      return card;
+    }
+
+    function renderEngines(current) {
+      if (isEditing()) return;
+
+      var list = $("engine-list");
+      list.innerHTML = "";
+
+      if (!current.engines.length) {
+        var empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "还没有搜索引擎，点「+ 添加」新建一个。";
+        list.appendChild(empty);
+        return;
+      }
+
+      current.engines.forEach(function (engine) {
+        list.appendChild(buildEngineCard(engine));
+      });
+    }
+
+    function renderCopySettings(current) {
+      var keyInput = $("copy-key");
+      if (document.activeElement !== keyInput) {
+        keyInput.value = current.copyKey || "";
+      }
+      Array.prototype.forEach.call(document.querySelectorAll("input[data-copy-target]"), function (radio) {
+        radio.checked = radio.value === (current.copyTarget || "filename");
+      });
+      var preview = $("copy-preview");
+      preview.textContent = current.hasMedia
+        ? "将复制：" + (current.copyPreview || "（空）")
+        : "";
+    }
+
+    function applySavedKey(current) {
+      if (!current.savedKey || !current.savedId) return;
+      var input = document.querySelector('input[data-key-for="' + current.savedId + '"]');
+      if (!input) return;
+      // 用户正在这个输入框里打字时不要改写，避免光标跳动
+      if (document.activeElement === input) return;
+      if (input.value !== current.savedKey) input.value = current.savedKey;
+    }
+
+    function render(newState) {
+      state = newState || {};
+      try {
+        renderSearch(state);
+        renderWarnings(state);
+        renderEngines(state);
+        renderCopySettings(state);
+        applySavedKey(state);
+      } catch (e) {
+        // 单个模块出错不应该让整块面板变成白板，至少把原因显示出来
+        showMessage("面板渲染异常：" + (e && e.message ? e.message : e), "error");
+        return;
+      }
+
+      if (state.message) {
+        showMessage(state.message, state.messageKind);
+      }
+    }
+
+    $("add").addEventListener("click", function () {
+      send("add-engine");
+    });
+
+    $("reset").addEventListener("click", function () {
+      var btn = $("reset");
+      if (!resetArmed) {
+        resetArmed = true;
+        btn.textContent = "确认恢复？";
+        setTimeout(function () {
+          resetArmed = false;
+          btn.textContent = "恢复默认";
+        }, 3000);
+        return;
+      }
+      resetArmed = false;
+      btn.textContent = "恢复默认";
+      send("reset-engines");
+    });
+
+    bindKeyRecorder($("copy-key"), function (value) {
+      if ($("copy-key").value !== value) $("copy-key").value = value;
+      send("set-copy-key", { key: value });
+    });
+
+    Array.prototype.forEach.call(document.querySelectorAll("input[data-copy-target]"), function (radio) {
+      radio.addEventListener("change", function () {
+        if (radio.checked) send("set-copy-target", { value: radio.value });
+      });
+    });
+
+    // 面板有焦点时，按键不会进入播放器窗口，这里转发给插件执行
+    document.addEventListener("keydown", function (event) {
+      if (isEditing()) return;
+      if (!state || !state.hotkeys || !state.hotkeys.length) return;
+      var combo = keyFromEvent(event);
+      if (!combo || combo.indexOf("+") < 0) return;
+      if (state.hotkeys.indexOf(combo) < 0) return;
+      event.preventDefault();
+      event.stopPropagation();
+      send("hotkey", { key: combo });
+    }, true);
+
+    var stateReceived = false;
+
+    window.iina.onMessage("state", function (data) {
+      stateReceived = true;
+      render(data);
+    });
+
+    window.iina.postMessage("ready", {});
+
+    // 不被动等推送：ready 有可能早于插件注册监听而丢失（本地页面加载很快），
+    // 那样面板会一直空白，直到随便点一次按钮。所以这里主动拉，失败再退避重试。
+    var PULL_DELAYS = [150, 400, 900, 1800];
+
+    function pullState(attempt) {
+      if (stateReceived) return;
+      send("refresh");
+      if (attempt < PULL_DELAYS.length) {
+        setTimeout(function () {
+          pullState(attempt + 1);
+        }, PULL_DELAYS[attempt]);
+      }
+    }
+
+    pullState(0);
+  </script>
+</body>
+
+</html>
