@@ -153,9 +153,18 @@ Turn off **去掉压制信息** in the plugin settings to search with the raw fi
 **Copy does nothing.**
 The clipboard goes through `osascript`, which needs the `file-system` permission. Re-enable the plugin and grant it again.
 
+**I uninstalled the plugin, why is my engine list still there?**
+That is IINA's behaviour, not something the plugin does. Uninstalling calls `JavascriptPlugin.remove()`, which deletes the plugin folder only; preferences live in a separate file that survives, so upgrades and reinstalls keep your engines and hotkeys. Everything stays on this Mac — plain text in `plugins/.preferences/com.example.iina-media-search.plist`.
+
 **Reset everything.**
-**恢复默认** in the panel restores the engine list. For a full reset, quit IINA and delete
+**恢复默认** in the panel restores the engine list. For a full wipe, quit IINA and delete
 `~/Library/Application Support/com.colliderli.iina/plugins/.preferences/com.example.iina-media-search.plist`.
+
+## Privacy
+
+The plugin requests only `show-osd` and `file-system`. It never requests `network-request`, and IINA blocks `iina.http` without it, so the plugin itself cannot send anything anywhere.
+
+What leaves the app is only what you ask for: `utils.open(url)` hands a search URL to your browser. The query — the cleaned filename or episode — travels in that URL to whichever engine you clicked. Pick your engines with that in mind, and turn off **去掉压制信息** only if you are happy with the raw filename being searched. The clipboard write goes through `osascript` and ends up in the system clipboard, visible to clipboard managers like anything else you copy.
 
 ## How it works
 

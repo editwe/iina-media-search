@@ -153,9 +153,18 @@ Spider-Man.No.Way.Home.2021.1080p.WEB-DL.mkv                →  Spider-Man No W
 **复制没反应。**
 剪贴板走 `osascript`，需要 `file-system` 权限。重新启用插件并授权。
 
+**我卸载了插件，为什么引擎列表还在？**
+这是 IINA 的行为，不是插件自己留的。卸载走的是 `JavascriptPlugin.remove()`，只删插件目录；偏好存在另一个文件里，不跟着删，所以升级、重装都能接着用你的配置。数据全在这台机器上，明文在 `plugins/.preferences/com.example.iina-media-search.plist`。
+
 **想全部重置。**
-面板里的 **恢复默认** 只还原引擎列表。彻底重置：退出 IINA，删掉
+面板里的 **恢复默认** 只还原引擎列表。彻底清空：退出 IINA，删掉
 `~/Library/Application Support/com.colliderli.iina/plugins/.preferences/com.example.iina-media-search.plist`。
+
+## 隐私
+
+插件只申请 `show-osd` 和 `file-system` 两个权限，**没有** `network-request` —— 没有这个权限，IINA 会直接拒绝 `iina.http`，插件本身发不出去任何东西。
+
+真正离开应用范围的只有你主动触发的动作：`utils.open(url)` 把搜索地址交给浏览器，关键词（清洗后的文件名或剧集名）跟着这个 URL 到你点的那家站点。所以引擎选谁很关键；不想让原始文件名被搜，就关掉 **去掉压制信息**。复制走 `osascript`，结果是写进系统剪贴板，剪贴板工具照样能看到，和你复制别的东西一样。
 
 ## 实现要点
 
