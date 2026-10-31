@@ -31,13 +31,17 @@
 
 ## 安装
 
-**下载 [`media-search-1.3.1.zip`](https://github.com/editwe/iina-media-search/releases/latest/download/media-search-1.3.1.zip)**，解压后把 `media-search.iinaplugin` 整个文件夹放进插件目录：
+**在 IINA 里装（推荐）**：打开 **设置 → 插件 → 获取插件…**，粘贴
 
-```bash
-"$HOME/Library/Application Support/com.colliderli.iina/plugins/"
+```
+editwe/iina-media-search
 ```
 
-或者从源码来：
+确认即可。IINA 会从 latest release 里取 `.iinaplgz` 安装，以后还能帮你检查更新。
+
+**用安装包**：下载 [`media-search-1.3.1.iinaplgz`](https://github.com/editwe/iina-media-search/releases/latest/download/media-search-1.3.1.iinaplgz)，双击它；或者走 **设置 → 插件 → 安装本地插件…** 选中这个文件。这个对话框只认 `.iinaplgz`，光是一个 `.iinaplugin` 文件夹是选不了的。
+
+**手动复制**：克隆仓库，把插件包拷进 IINA 的插件目录：
 
 ```bash
 git clone https://github.com/editwe/iina-media-search.git

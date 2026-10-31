@@ -31,13 +31,17 @@ It reads the current filename, strips the release noise (`1080p`, `WEB-DL`, `DDP
 
 ## Install
 
-**[Download `media-search-1.3.1.zip`](https://github.com/editwe/iina-media-search/releases/latest/download/media-search-1.3.1.zip)** — unzip it, then move `media-search.iinaplugin` into the plugins folder:
+**From IINA (recommended).** Open **Settings → Plugins → 获取插件… / Get Plugins…**, paste
 
-```bash
-"$HOME/Library/Application Support/com.colliderli.iina/plugins/"
+```
+editwe/iina-media-search
 ```
 
-Or from source:
+and confirm. IINA pulls the `.iinaplgz` from the latest release, so it can check for updates for you later.
+
+**From the package.** Download [`media-search-1.3.1.iinaplgz`](https://github.com/editwe/iina-media-search/releases/latest/download/media-search-1.3.1.iinaplgz) and double-click it, or use **Settings → Plugins → 安装本地插件… / Install Local Plugin…** and pick the file. That dialog only accepts `.iinaplgz` — a bare `.iinaplugin` folder cannot be selected there.
+
+**By hand.** Clone and copy the bundle into IINA's plugin folder:
 
 ```bash
 git clone https://github.com/editwe/iina-media-search.git

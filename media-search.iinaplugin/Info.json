@@ -24,5 +24,7 @@
     "copyKey": "Alt+c",
     "engines": "[{\"id\":\"douban\",\"name\":\"豆瓣\",\"tpl\":\"https://search.douban.com/movie/subject_search?search_text={q}\",\"key\":\"Alt+1\"},{\"id\":\"imdb\",\"name\":\"IMDb\",\"tpl\":\"https://www.imdb.com/find/?q={q}&s=tt\",\"key\":\"Alt+2\"},{\"id\":\"tmdb\",\"name\":\"TMDB\",\"tpl\":\"https://www.themoviedb.org/search?query={q}&language=zh-CN\",\"key\":\"Alt+3\"},{\"id\":\"google\",\"name\":\"Google\",\"tpl\":\"https://www.google.com/search?q={q}\",\"key\":\"Alt+4\"},{\"id\":\"bing\",\"name\":\"必应\",\"tpl\":\"https://www.bing.com/search?q={q}\",\"key\":\"Alt+5\"}]"
   },
+  "ghRepo": "editwe/iina-media-search",
+  "ghVersion": 1,
   "homepage": "https://github.com/editwe/iina-media-search"
 }
