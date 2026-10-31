@@ -14,21 +14,27 @@
 
 // MARK: - 语言 / Localisation
 //
-// 插件跑在 JSCore 里，没有 navigator；IINA 提供了 utils.preferredLocalizations()，
+// 插件跑在 JSCore 里，没有 navigator；IINA 1.5 起提供 utils.preferredLocalizations()，
 // 返回 Bundle.main.preferredLocalizations（例如 ["zh-Hans", "en"]）。
-// 只区分中文与其他：其他语言一律回退英文。
+// 1.4 没有这个 API，退回 `defaults read -g AppleLanguages`（异步，先按英文启动菜单，
+// 确认后再重建一次）。只区分中文与其他：其他语言一律英文。
 
 function detectLanguage() {
   try {
-    var list = iina.utils.preferredLocalizations();
-    var first = list && list.length ? String(list[0]) : "";
-    return /^zh/i.test(first) ? "zh" : "en";
+    if (typeof iina.utils.preferredLocalizations === "function") {
+      var list = iina.utils.preferredLocalizations();
+      var first = list && list.length ? String(list[0]) : "";
+      if (first) return /^zh/i.test(first) ? "zh" : "en";
+    }
   } catch (e) {
-    return "en";
+    log("读取界面语言失败: " + e);
   }
+  return "";
 }
 
 var LANG = detectLanguage();
+var LANG_PENDING = LANG === "";
+if (LANG_PENDING) LANG = "en";
 
 var STRINGS = {
   zh: {
@@ -140,6 +146,39 @@ var BUILTIN_NAMES = {
   douban: { zh: "豆瓣", en: "Douban" },
   bing: { zh: "必应", en: "Bing" }
 };
+
+/** 语言确定后再同步一次：引擎默认名、菜单、面板状态都要跟着换。 */
+function applyDetectedLanguage(lang) {
+  if (!lang || lang === LANG) return;
+  LANG = lang;
+  LANG_PENDING = false;
+  log("界面语言: " + lang);
+  try { syncDefaultNames(); } catch (e) {}
+  try { refreshMenu(); } catch (e) {}
+  try { pushSidebar(); } catch (e) {}
+}
+
+/**
+ * IINA 1.4 没有 preferredLocalizations()，用 defaults 兜底。
+ * exec 是异步的，所以先用英文把菜单建出来，确认是中文再重建一次。
+ */
+function resolveLanguageAsync() {
+  if (!LANG_PENDING) return;
+  try {
+    var result = iina.utils.exec("/usr/bin/defaults", ["read", "-g", "AppleLanguages"], null, null, null);
+    if (result && typeof result.then === "function") {
+      result
+        .then(function (res) {
+          var text = res && res.stdout ? String(res.stdout) : "";
+          if (!text) return;
+          applyDetectedLanguage(/"zh/i.test(text) ? "zh" : "en");
+        })
+        .catch(function () { /* 没权限就算了，保持英文 */ });
+    }
+  } catch (e) {
+    log("异步读取语言失败: " + e);
+  }
+}
 
 var DEFAULT_ENGINES = [
   {
@@ -1307,4 +1346,5 @@ try {
 } catch (e) {
   log("初始化菜单失败: " + e);
 }
+resolveLanguageAsync();
 log("已加载 v1.4.0 (" + LANG + ")");
